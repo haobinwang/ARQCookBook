@@ -44,8 +44,7 @@ node[:deploy].each do |application, deploy|
   
   # start
   service 'rpm' do
-        #service_name "#{application}"
-        service_name "arq"
+        service_name "#{application}"
         action :nothing
   end
   
