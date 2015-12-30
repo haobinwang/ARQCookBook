@@ -1,12 +1,12 @@
 include_recipe 'deploy'
 
-yum_package 'python26' do
-  action :install
-end
+#yum_package 'python26' do
+#  action :install
+#end
 
-yum_package 'python-netifaces' do
-  action :install
-end
+#yum_package 'python-netifaces' do
+#  action :install
+#end
 
 node[:deploy].each do |application, deploy|
   # determine root folder of new app deployment
