@@ -3,7 +3,7 @@ require 'aws-sdk'
 
 
 node_eip=node["opsworks"]["instance"]["ip"]
-put "### node public IP:#{node_eip} ###"
+puts "### node public IP:#{node_eip} ###"
 
 
 ops_inst_id=node["opsworks"]["instance"]["id"]
@@ -36,7 +36,7 @@ if instance.respond_to?(:layer_ids)
 end
 
 public_ip=instance.elastic_ip
-put "### get EIP from instance:#{public_ip} ###"
+puts "### get EIP from instance:#{public_ip} ###"
 
 #awstest.ers.trendmicro.com
 HostedZoneID='Z1QLIJZNNZ5SR0'
@@ -59,13 +59,13 @@ res_records=[{value: RData1}]
 #try to get record set
 
 resp = r53.list_resource_record_sets({
-    hosted_zone_id:HostedZoneID
+    hosted_zone_id: HostedZoneID,
     start_record_name: DNSName,
     start_record_type: record_type,
     start_record_identifier: record_set_identifier,
     max_items: 1})
 
-bNeedUpdate = ture
+bNeedUpdate = true
 resp.resource_record_sets.each do |record|
    if record.respond_to?(:resource_records)
       record.resource_records.each do |resource_record|
@@ -88,7 +88,7 @@ if bNeedUpdate
         comment: "ResourceDescription",
         changes: [
           {
-            action: "CREATE", # required, accepts CREATE, DELETE, UPSERT
+            action: "UPSERT", # required, accepts CREATE, DELETE, UPSERT
             resource_record_set: { # required
               name: DNSName, # required
               type: record_type, # required, accepts SOA, A, TXT, NS, CNAME, MX, PTR, SRV, SPF, AAAA
@@ -96,7 +96,6 @@ if bNeedUpdate
               region: record_region, # accepts us-east-1, us-west-1, us-west-2, eu-west-1, eu-central-1, ap-southeast-1, ap-southeast-2, ap-northeast-1, sa-east-1, cn-north-1
               ttl: record_ttl,
               resource_records: res_records
-              ]
             },
           },
         ],
