@@ -25,6 +25,7 @@ node[:deploy].each do |application, deploy|
                 rpm -ivh "#{app_root}/archive"
         EOH
         notifies :start, "service[rpm]", :delayed
+        not_if "rpm -qa | grep 'arq-3.0'"
   end
   
   # start
@@ -35,3 +36,6 @@ node[:deploy].each do |application, deploy|
   
   
 end
+#include_recipe 'ARQ3::instanceAttributes'
+#include_recipe 'ARQ3::inst_eip2r53'
+#include_recipe 'ARQ3::opsworks_eip'
