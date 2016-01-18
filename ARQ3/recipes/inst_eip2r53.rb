@@ -41,7 +41,7 @@ puts "### get EIP from instance:#{public_ip} ###"
 #awstest.ers.trendmicro.com
 HostedZoneID='Z1QLIJZNNZ5SR0'
 
-#aws.ers.trendmicro.com	
+#aws.ers.trendmicro.com
 #HostedZoneID='Z3H87DJJHX9OQH'
 
 
@@ -66,8 +66,10 @@ resp = r53.list_resource_record_sets({
     max_items: 1})
 
 bNeedUpdate = true
+bCreate = true
 resp.resource_record_sets.each do |record|
-   if record.respond_to?(:resource_records)
+   if record.respond_to?(:resource_records) and record.respond_to?(:set_identifier)
+      bCreate = false
       record.resource_records.each do |resource_record|
          if resource_record.respond_to?(:value)
             if resource_record.value == public_ip
@@ -81,6 +83,9 @@ resp.resource_record_sets.each do |record|
    end
 end
 
+Action = bCreate ? "CREATE" : "UPSERT"
+puts "### Action: #{Action} ###"
+
 if bNeedUpdate
     resp = r53.change_resource_record_sets({
       hosted_zone_id: HostedZoneID,
@@ -88,7 +93,7 @@ if bNeedUpdate
         comment: "ResourceDescription",
         changes: [
           {
-            action: "UPSERT", # required, accepts CREATE, DELETE, UPSERT
+            action: Action, # required, accepts CREATE, DELETE, UPSERT
             resource_record_set: { # required
               name: DNSName, # required
               type: record_type, # required, accepts SOA, A, TXT, NS, CNAME, MX, PTR, SRV, SPF, AAAA
