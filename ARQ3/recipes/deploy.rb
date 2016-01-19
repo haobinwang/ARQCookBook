@@ -1,10 +1,9 @@
-#include_recipe 'deploy'
+include_recipe 'deploy'
 
 node[:deploy].each do |application, deploy|
   # determine root folder of new app deployment
   app_root = "#{deploy[:deploy_to]}/current"
   
-=begin
   # deploy init 
   opsworks_deploy_dir do
     user deploy[:user]
@@ -16,10 +15,9 @@ node[:deploy].each do |application, deploy|
     deploy_data deploy
     app application
   end
-=end
 
   Chef::Log.info("deploy #{application}")
-  
+  # rpm install 
   rpm_package "#{application}" do
     source "#{app_root}/archive"
     notifies :start, "service[rpm]", :delayed
