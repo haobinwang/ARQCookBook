@@ -1,13 +1,17 @@
 
 require 'aws-sdk'
 
+region = node["opsworks"]["instance"]["region"]
+hostname = node["opsworks"]["instance"]["hostname"]
 
-node_eip=node["opsworks"]["instance"]["ip"]
-puts "### node public IP:#{node_eip} ###"
+eip_new = node["ip_mapping"][region][hostname]["ip"]
+mapped_ns = node["ip_mapping"][region][hostname]["ns"]
 
+#eip_old=node["opsworks"]["instance"]["ip"]
+#ops_inst_id=node["opsworks"]["instance"]["id"]
+public_ip =eip_new
 
-ops_inst_id=node["opsworks"]["instance"]["id"]
-
+=begin
 #get eip from instance
 opsworks = AWS::OpsWorks::Client.new
 resp = opsworks.describe_instances({instance_ids: [ops_inst_id]})
@@ -37,6 +41,7 @@ end
 
 public_ip=instance.elastic_ip
 puts "### get EIP from instance:#{public_ip} ###"
+=end
 
 #awstest.ers.trendmicro.com
 HostedZoneID='Z1QLIJZNNZ5SR0'
@@ -47,10 +52,10 @@ HostedZoneID='Z1QLIJZNNZ5SR0'
 
 r53 = AWS::Route53::Client.new()
 
-DNSName='ns1.awstest.ers.trendmicro.com.'
+DNSName=mapped_ns #'ns1.awstest.ers.trendmicro.com.'
 record_type='A'
 record_set_identifier='awstestarq-ns1'
-record_region=node["opsworks"]["instance"]["region"]
+record_region=region
 record_ttl=3600
 RData1=public_ip
 res_records=[{value: RData1}]
