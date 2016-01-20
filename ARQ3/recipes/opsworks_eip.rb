@@ -1,8 +1,6 @@
 require 'aws-sdk'
 
 
-
-
 region = node["opsworks"]["instance"]["region"]
 hostname = node["opsworks"]["instance"]["hostname"]
 
@@ -21,16 +19,35 @@ stackid=instance.stack_id
 
 
 #regist eip to stack
-resp = client.register_elastic_ip({elastic_ip: eip_new,stack_id: stackid})
+resp = opsworks.register_elastic_ip({elastic_ip: eip_new,stack_id: stackid})
 
 #associate eip
 resp = opsworks.associate_elastic_ip({elastic_ip: eip_new,instance_id: OpsWorks_instance_id})
 
+=begin
 #deregist old eip
-opsworks.deregister_elastic_ip
-resp = client.deregister_elastic_ip({elastic_ip: eip_old})
+resp = opsworks.deregister_elastic_ip({elastic_ip: eip_old})
 
 #release old eip
 ec2 = AWS::EC2::Client.new
-resp = client.release_address({public_ip: eip_old})
 
+#get allocation id
+
+#resp = ec2.describe_addresses(filters: [{name: "public-ip",values: [eip_old]}])
+resp = ec2.describe_addresses()
+resp.addresses.each do |addresse|
+  puts "### allocation_id:#{addresse.allocation_id} ###"
+  puts "### public_ip:#{addresse.public_ip} ###"
+  if addresse.public_ip == eip_old
+    allocationid=addresse.allocation_id
+    puts "### find IP allocationid:#{allocationid} ###"
+  end
+end 
+
+#release old eip
+if allocationid.nil?
+  resp = ec2.release_address({public_ip: eip_old,allocation_id: allocationid})
+else
+  puts "### cannot get allocation id ###"
+end
+=end
