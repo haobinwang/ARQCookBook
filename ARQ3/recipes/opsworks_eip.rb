@@ -10,17 +10,16 @@ eip_old=node["opsworks"]["instance"]["ip"]
 OpsWorks_instance_id=node["opsworks"]["instance"]["id"]
 
 
+
 ###############################
 #fundcion
-def aws_eip2allocationid(eip)
+def aws_eip2allocationid(region,eip)
   ret = nil
   #cmd = "aws ec2 describe-addresses"
-  cmd = "aws ec2 describe-addresses --public-ips #{eip}"
+  cmd = "aws ec2 describe-addresses --region #{region} --public-ips #{eip}"
   #puts "### try aws ec2 describe-addresses ###"
   value = %x( #{cmd} )
-  if value.include? "A client error"
-    puts "### #{value} ###"
-  else
+  if value.include? '"Addresses":'
     ip_hash = JSON.parse(value)
     if ip_hash.has_key?("Addresses")
       ip_hash["Addresses"].each do |address|
@@ -60,7 +59,7 @@ resp = opsworks.deregister_elastic_ip({elastic_ip: eip_old})
 ec2 = AWS::EC2::Client.new
 
 #get allocation id
-allocationid=aws_eip2allocationid(eip_old)
+allocationid=aws_eip2allocationid(region,eip_old)
 
 
 #release old eip
