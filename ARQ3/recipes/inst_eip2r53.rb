@@ -60,7 +60,7 @@ def r53_cli_hosted_zone_names2ids(hosted_zone_names)
   return hosted_zone_ids
 end
 
-def r53_get_resource_record_sets(hostedzoneid, dnsname, type, set_identifier)
+def r53_get_resource_record_sets(hostedzoneid, dnsname, type, set_identifier,target_ip)
   r53 = AWS::Route53::Client.new()
   resp = r53.list_resource_record_sets({
       hosted_zone_id: hostedzoneid,
@@ -76,7 +76,7 @@ def r53_get_resource_record_sets(hostedzoneid, dnsname, type, set_identifier)
         bNeedCreate = false
         record.resource_records.each do |resource_record|
            if resource_record.respond_to?(:value)
-              if resource_record.value == public_ip
+              if resource_record.value == target_ip
                   bNeedUpdate = false
               else
                   res_records.insert(-1,resource_record)
@@ -139,7 +139,7 @@ record=[{value: RData1}]
 hosted_zone_ids.each do |hostedzoneid|
   #try to get record set in each hosted zone
   res_records,bNeedUpdate,bNeedCreate = r53_get_resource_record_sets(hostedzoneid, DNSName,
-                                          record_type, record_set_identifier)
+                                          record_type, record_set_identifier,public_ip)
   res_records+=record
 
   if bNeedUpdate
