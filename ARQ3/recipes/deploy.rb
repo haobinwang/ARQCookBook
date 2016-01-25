@@ -1,9 +1,6 @@
 node[:deploy].each do |application, config|
-  # determine root folder of new app deployment
-  app_root = "#{config[:deploy_to]}/current"
   s3_bucket, s3_key = OpsWorks::SCM::S3.parse_uri(config[:scm][:repository])
   package_name = s3_key.split('/')[-1]
-  puts "#{package_name}"
 
   Chef::Log.info("download #{application} from #{config[:scm][:repository]}")
   # download rpm from s3
