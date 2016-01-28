@@ -23,6 +23,6 @@ node[:deploy].each do |application, config|
   # start
   service "#{application}" do
     #service_name "#{application}"
-    action :nothing
+    action :enable
   end
 end
