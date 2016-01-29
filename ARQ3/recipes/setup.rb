@@ -1,4 +1,4 @@
-include_recipe 'deploy'
+#include_recipe 'deploy'
 
 #account for arq
 user 'rbldnsd' do
