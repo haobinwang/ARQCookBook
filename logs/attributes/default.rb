@@ -1,1 +1,2 @@
-default[:cwlogs][:logfile] = '/var/log/aws/opsworks/opsworks-agent.log'
+default[:cwlogs][:logfile] = '/local/rbldnsd/log'
+default[:cwlogs][:loggourp] = 'arq_query_log'
