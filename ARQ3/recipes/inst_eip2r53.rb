@@ -4,8 +4,14 @@ require 'aws-sdk'
 region = node["opsworks"]["instance"]["region"]
 hostname = node["opsworks"]["instance"]["hostname"]
 
-public_ip = node["ip_mapping"][region][hostname]["ip"]
-mapped_ns = node["ip_mapping"][region][hostname]["ns"]
+#adjust hostname if name with '-'
+hostname_node = hostname
+nFind=hostname_node.index('-')
+if nFind:
+  hostname_node=hostname_node[0,nFind]
+  
+public_ip = node["ip_mapping"][region][hostname_node]["ip"]
+mapped_ns = node["ip_mapping"][region][hostname_node]["ns"]
 
 hosted_zone_names = node["hosted_zones"]
 

@@ -4,8 +4,14 @@ require 'aws-sdk'
 region = node["opsworks"]["instance"]["region"]
 hostname = node["opsworks"]["instance"]["hostname"]
 
-eip_new = node["ip_mapping"][region][hostname]["ip"]
-mapped_ns = node["ip_mapping"][region][hostname]["ns"]
+#adjust hostname if name with '-'
+hostname_node = hostname
+nFind=hostname_node.index('-')
+if nFind:
+  hostname_node=hostname_node[0,nFind]
+
+eip_new = node["ip_mapping"][region][hostname_node]["ip"]
+mapped_ns = node["ip_mapping"][region][hostname_node]["ns"]
 #eip_old=node["opsworks"]["instance"]["ip"]
 OpsWorks_instance_id=node["opsworks"]["instance"]["id"]
 
