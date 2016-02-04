@@ -51,13 +51,26 @@ instance=resp.instances[0]
 stackid=instance.stack_id
 eip_old=instance.public_ip
 
+instance_id_old = nil
+
 if eip_old == eip_new
   eip_old = nil
   puts "### #{eip_new} already bind to instance###"
 else
-  #regist eip to stack
-  resp = opsworks.register_elastic_ip({elastic_ip: eip_new,stack_id: stackid})
-
+  #check if new eip associated a instance 
+  resp = opsworks.describe_elastic_ips({ips: [eip_new]})
+  resp.elastic_ips.each do |elastic_data|
+    if elastic_data.ip == eip_new
+      instance_id_old=elastic_data.instance_id
+      break
+    end
+  end
+  
+  unless instance_id_old #not associated instance
+    #regist eip to stack
+    resp = opsworks.register_elastic_ip({elastic_ip: eip_new,stack_id: stackid})
+  end
+  
   #associate eip
   resp = opsworks.associate_elastic_ip({elastic_ip: eip_new,instance_id: OpsWorks_instance_id})
 end
@@ -81,3 +94,9 @@ else
     resp = ec2.release_address({allocation_id: allocationid})
   end
 end
+
+#stop and delete old instance
+#unless instance_id_old.nil?
+#  opsworks.
+#end
+
