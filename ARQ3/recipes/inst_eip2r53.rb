@@ -7,9 +7,9 @@ hostname = node["opsworks"]["instance"]["hostname"]
 #adjust hostname if name with '-'
 hostname_node = hostname
 nFind=hostname_node.index('-')
-if nFind:
+if nFind
   hostname_node=hostname_node[0,nFind]
-  
+end
 public_ip = node["ip_mapping"][region][hostname_node]["ip"]
 mapped_ns = node["ip_mapping"][region][hostname_node]["ns"]
 
