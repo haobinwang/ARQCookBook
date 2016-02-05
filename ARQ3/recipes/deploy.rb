@@ -1,6 +1,7 @@
 node[:deploy].each do |application, config|
   s3_bucket, s3_key = OpsWorks::SCM::S3.parse_uri(config[:scm][:repository])
-  package_name = s3_key.split('/')[-1]
+  build = config[:environment_variables][:build]
+  package_name = s3_key.split('/')[-1].gsub("0000","#{build}")
 
   Chef::Log.info("download #{application} from #{config[:scm][:repository]}")
   # download rpm from s3
