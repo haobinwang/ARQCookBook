@@ -1,2 +1,2 @@
-default[:cwlogs][:logfile] = '/local/rbldnsd/log'
-default[:cwlogs][:loggourp] = 'arq_query_log'
+default[:cwlogs][:logfile] = '/var/log/messages'
+default[:cwlogs][:loggourp] = 'arq_application_log'
